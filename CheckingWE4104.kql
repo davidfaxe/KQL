@@ -1,0 +1,9 @@
+let startDate = datetime(2022-01-01 00:00:00);
+let endDate = datetime(2022-01-31 23:59:59);
+Event
+| where EventID == 4104 and Channel == "Microsoft-Windows-PowerShell/Operational"
+| extend TaskName = tostring(parse_json(EventData).TaskName)
+| where TaskName contains "TaskScheduler"
+| where TimeGenerated >= startDate and TimeGenerated <= endDate
+| summarize count() by Computer = ComputerName
+| render barchart with (title="PowerShell Scripts Run from Scheduled Tasks by Computer")
